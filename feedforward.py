@@ -4,10 +4,11 @@ from numpy import e
 
 
 def sigmoid(x):
-    return 1 / (1 - e**(-x))
+    return 1 / (1 + e**(-x))
 
 def dsigmoid(x):
-    return sigmoid(x) * (1 - sigmoid(x))
+    sx = sigmoid(x)
+    return sx * (1 - sx)
 
 def sum_sqr_err(AL, Y):
     return np.sum((AL - Y)**2, axis=1, keepdims=True) / (2 * len(Y))
@@ -77,10 +78,10 @@ def update(W, b, dW, db, lrate):
     return W, b
 
 
-def train(X, Y, W, b, acts, d_acts, loss, d_loss, lrate):
+def train(X, Y, W, b, acts, d_acts, loss, d_loss, lrate, iters):
     A, Z  = feedforward(X, W, b, acts)
     dW, db = backprop(W, Y, A, Z, d_acts, d_loss)
-    W, b = update(W, b, dW, db)
+    W, b = update(W, b, dW, db, lrate)
     return W, b 
 
 
@@ -162,7 +163,7 @@ def test_update():
     Y = np.ones((dims[-1], m))
     A, Z = feedforward(X, W, b, acts)
     dA, dZ = backprop(W, Y, A, Z, [dsigmoid, dsigmoid, dsigmoid], dsqr_loss)
-    W, b = update(W, b, dA, dZ)
+    W, b = update(W, b, dA, dZ, 0.001)
     assert W[1].shape == (4,3), W[1].shape
     assert W[2].shape == (7,4), W[2].shape
     assert W[3].shape == (5,7), W[3].shape
@@ -176,7 +177,7 @@ def test_update():
 def run_test(test_func):
         print("passed") if test_func() else print("failed")
 
-run_test(test_init_params) 
+run_test(test_init) 
 run_test(test_feedforward)
 run_test(test_backprop)
 run_test(test_update)
