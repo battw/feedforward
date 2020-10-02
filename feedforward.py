@@ -26,7 +26,7 @@ def init(n):
     W = [None] * L 
     b = [None] * L 
     for l in range(1, L):
-        W[l] = np.random.randn(n[l], n[l-1])
+        W[l] = np.random.randn(n[l], n[l-1]) * 0.001
         b[l] = np.zeros((n[l], 1))
 
     return (W, b)
